@@ -1,0 +1,171 @@
+1)join
+-테이블과 테이블을 연결하여 원하는 데이터를 얻고자 할 때 
+select e.first_name, e.department_id, d.department_name
+from employees e, departments d
+where e.department_id = d.department_id;
+
+select e.first_name, e.department_id, d.department_name
+from employees e 
+join departments d
+on e.department_id = d.department_id;
+
+--사원,부서테이블로부터 이름, 부서번호, 부서이름, 부서위치를 조회
+select e.first_name, e.department_id, d.department_name, d.location_id
+from employees e
+join departments d
+on e.department_id = d.department_id
+
+select e.first_name, e.department_id, d.department_name, d.location_id
+from employees e, departments d
+where e.department_id = d.department_id;
+
+--부서테이블(departments) 지역테이블(locations)
+부서명, 도시(city)를 조회
+select d.location_id, l.city
+from departments d, locations l
+where d.location_id = l.location_id;
+
+select d.location_id, l.city
+from departments d
+join locations l
+on d.location_id = l.location_id;
+
+--지역테이블,국가테이블(countries)을 조회
+도시명,도시가 위치한 국가명(country_name)을 조회
+select l.city, c.country_name
+from locations l, countries c
+where l.country_id = c.country_id;
+
+select l.city, c.country_name
+from  locations l
+join countries c
+on l.country_id = c.country_id;
+
+--사원, 직종(jobs)테이블을 조회
+이름, 성, 이메일, 직종, 직종명을 조회
+select e.first_name, e.last_name, e.email, e.job_id, j.job_title
+from employees e, jobs j
+where e.job_id = j.job_id;
+
+select e.first_name, e.last_name, e.email, e.job_id, j.job_title
+from employees e
+join jobs j
+on e.job_id = j.job_id;
+
+--이름 부서명 도시명을 조회
+select e.first_name, d.department_name,l.city
+from employees e, departments d, locations l
+where e.department_id = d.department_id and d.location_id = l.location_id;
+
+select e.first_name, d.department_name, l.city
+from employees e
+join departments d  ON e.department_id = d.department_id
+join locations l ON d.location_id = l.location_id;
+
+
+--사원, 부서, 지역테이블조회
+이름,성,이메일,부서번호,부서명,지역번호,도시명을 조회하되 도시가 Seattle인 경우만 조회
+select e.first_name, e.last_name, e.department_id, d.location_id, l.city
+from employees e, departments d, locations l
+where e.department_id = d.department_id and d.location_id = l.location_id and l.city = 'Seattle';
+
+select e.first_name, e.last_name, e.department_id, d.location_id, l.city
+from employees e 
+join departments d ON e.department_id = d.department_id
+join locations l on d.location_id = l.location_id
+where l.city = 'Seattle';
+
+--국가(countries),대륙(rgion)테이블에서 국가명 ,대륙명을 조회
+select c.country_name, r.region_name
+from countries c, regions r
+where c.region_id = r.region_id;
+
+select c.country_name, r.region_name
+from countries c
+join regions r ON c.region_id = r.region_id;
+
+--이름 직종 부서명 조회
+select e.first_name, e.job_id, d.department_name
+from employees e, departments d
+where e.department_id = d.department_id;
+
+select e.first_name, e.job_id, d.department_name
+from employees e
+join departments d ON e.department_id = d.department_id;
+
+--이름, 직종 풀네임을 조회
+select e.first_name, j.job_title
+from employees e, jobs j
+where e.job_id = j.job_id;
+
+
+select e.first_name, j.job_title
+from employees e
+join jobs j ON e.job_id = j.job_id;
+
+--각 직종별 인원수 5인 이상 직종만 인원수, 인원수 적은 순으로 정렬***
+select j.job_title,count(*)
+from jobs j,employees e
+where e.job_id = j.job_id
+group by j.job_title
+having count(*) >= 5
+order by count(*);
+
+select j.job_title, count(*)
+from jobs j
+join employees e
+on e.job_id = j.job_id
+group by j.job_title
+having count(*) >= 5
+order by count(*);
+
+부서이름, 주소, 도시정보 출력
+select d.department_name, l.street_address ,l.city
+from departments d, locations l
+where d.location_id =l.location_id;
+
+select d.department_name, l.street_address, l.city
+from departments d
+join locations l
+on d.location_id = l.location_id;
+
+--부서의 이름과 그 부서의 부서장의 이름을 조회
+select d.department_name, e.first_name
+from departments d , employees e
+where d.department_id = e.department_id d.manager_id = e.employee_id; 
+
+select d.department_name, e.first_name
+from employees e
+join departments d
+on d.department_id = e.department_id and d.manager_id = e.employee_id; 
+
+--각 직원들의 이름과 성을 붙여서 , 부서이름, 근무중인 도시명 조회***
+select e.first_name || ' ' ||  e.last_name fullname, d.department_name, l.city
+from employees e, departments d ,locations l
+where e.department_id = d.department_id and d.location_id = l.location_id; 
+
+select  e.first_name || ' ' ||  e.last_name fullname , d.depatment_name, l.city
+from employees e
+join departments d ON e.department_id = d.department_id 
+join locations ON d.location_id = l.location_id; 
+
+--부서명, 도시, 국가, 대륙별 근무인원수를 직원수가 많은순으로 정렬 하고 20명 이상인 대륙만 조회**
+select d.department_name, l.city, c.country_name, r.region_name, count(*) EMPLOYEE_COUNT
+from departments d, locations l, countries c, regions r, employees e
+where d.location_id = l.location_id and l.country_id = c.country_id and c.region_id = r.region_id and e.department_id = d.department_id
+group by d.department_name,l.city,c.country_name,r.region_name
+having count(*) >= 20
+order by count(*) DESC;
+
+select d.department_name, l.city, c.country_name, r.region_name, count(*) EMPLOYEE_COUNT
+from departments d
+join locations l ON d.location_id = l.location_id
+join countries c ON l.country_id = c.country_id 
+join regions r ON c.region_id = r.region_id
+join employees e ON e.department_id = d.department_id
+group by d.department_name,l.city,c.country_name,r.region_name
+having count(*) >= 20
+order by count(*) DESC;
+
+
+
