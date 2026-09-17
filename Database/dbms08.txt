@@ -138,5 +138,23 @@ where lower(first_name)  =  'michael';
 --이름의 어디든 m 또는 M이 들어있는 사원의 사번, 이름을 조회*
 select employee_id, first_name
 from employees
-where upper(first_name) LIKE '%M%';
+where upper(first_name) LIKE '%M%';  
 
+-lpad() :왼쪽의 자릿수를 늘리는 함수
+-rpad() :오른쪽의 자릿수를 늘리는 함수
+select lpad('good',6, '#')from dual;
+select lpad('good',8,'안녕') from dual;
+select rpad('good',6,'@')from dual;
+
+-ltrim() : 왼쪽의 문자를 지우는 함수
+-rtrim() : 오른쪽의 문자를 지우는 함수
+select ltrim('helloh','h')from dual;
+select rtrim('helloh',h)from dual;
+
+-substr() : 특정문장을 잘라내는 함수
+select substr('good morning michael',8, 4) from dual;
+select substr('good morning michael',8 ) from dual;
+select substr('good morning michael',-4 ) from dual;
+select substr('good morning michael',-7,4 ) from dual;
+
+--이름,입사연도만 출력
