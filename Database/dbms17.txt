@@ -1,0 +1,98 @@
+1) 시퀀스 : 연속적인 번호를 만들어 주는 기능(형식)
+create sequence 시퀀스 이름
+start with시작값
+increment by 증가값
+maxvalue 최대값
+minvalue 최소값
+cache / no cache
+
+create sequence serial_seq
+start with 10
+increment by 2
+
+
+create table goods(
+	no NUMBER(3) primary key
+	name VARCHAR2(50),
+
+insert into goods
+values (serial_seq.nextval,'제품1');
+
+--현재 시퀀스 번호
+sekect serial_seq.currval
+from dual;
+
+create sequence student_seq;
+
+create table student(
+	idx NUMBER(3) primary key,
+	name VARCHAR2(20),
+	major VARCHAR2(20),
+	age NUMBER(3)
+);
+
+insert into student
+values (student_seq.nextval,'김유비','화학과',20);
+
+insert into student
+values (student_seq.nextval,'박장비','화학과',21);
+
+
+--student 테이블의 학생정보를 한페이지에 5명씩 보이도록 페이징
+select * from
+( select RANK() OVER(order by idx DESC) no, s.*
+from student s
+)
+where no between 1 and 5;
+
+
+2)view : 조회를 목적으로 하는 가상의 테이블
+--사번, 입사일, 직종, 상사번호, 부서번호만을 조회하기 위한 view 생성
+create or replace view My_empl(empno, hire, job, mgr, deptno ) AS
+select employee_id,hire_date, job_id, manager_id, department_id
+from employees;
+
+select * from My_empl;
+
+--사원들의 이름, 급여, 급여+10000의 결과를 조회하는 view
+create or replace view My_empl AS
+select first_name, salary, salary +10000 res
+from employees;
+
+--성적관리 테이블
+CREATE TABLE score (
+    id NUMBER(3) PRIMARY KEY,
+    name VARCHAR2(30) NOT NULL,
+    kor NUMBER(3) NOT NULL,
+    eng NUMBER(3) NOT NULL,
+    math NUMBER(3) NOT NULL
+);
+
+create sequence seq_scoreid;
+
+insert into score
+values(seq_scoreid.nextval, '홍길동',100,70,99);
+
+insert into score
+values(seq_scoreid.nextval, '김길순',70,90,90);
+
+insert into score
+values(seq_scoreid.nextval, '김길순',83,81,92);
+
+--score_view 라는 이름으로 id, 국어, 영어, 수학, 총점, 평균을 조회하는 view를 생성 **
+create or replace view score_view AS
+select id, kor, eng, math,kor +  eng + math total , trunc((kor +  eng + math) / 3 ) avg,
+RANK() OVER (order by kor+eng+math DESC) rank
+from score;	
+
+select * from score_view;
+
+--사번, 풀네임, 직종, 직종명, 급여, 부서명을 조회하는 view
+create or replace view empl_detail AS
+select e.employee_id, e.first_name || ' ' || e.last_name full_name, e.job_id, j.Job_title, e.salary, d.department_name
+from employees e
+join departments d ON e.department_id = d.department_id
+join jobs j ON e.job_id = j.job_id;
+
+select * from empl_detail
+order by job_id;
